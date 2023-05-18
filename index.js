@@ -43,6 +43,24 @@ async function run() {
     console.log(date);
     const query={};
     const options= await appointmentOptionCollection.find(query).toArray();
+
+
+                // get the bookings of the provided date
+                const bookingQuery = { appointmentDate: date }
+                const alreadyBooked = await bookingnsCollection.find(bookingQuery).toArray();
+    
+                // code carefully :D
+                options.forEach(option => {
+                    const optionBooked = alreadyBooked.filter(book => book.service === option.name);
+                    const bookedSlots = optionBooked.map(book => book.slot);
+                    const remainingSlots = option.slots.filter(slot => !bookedSlots.includes(slot))
+                    
+                    option.slots = remainingSlots;
+
+                    console.log(date,option.name,remainingSlots.length);
+                }
+                )
+    
     res.send(options)
   })  
 
@@ -52,6 +70,20 @@ async function run() {
       
     const booking=req.body;
     console.log(booking);
+
+    const query = {
+      appointmentDate: booking.appointmentDate,
+      email: booking.email,
+      service: booking.service
+  }
+
+  const alreadyBooked = await bookingnsCollection.find(query).toArray();
+
+  if (alreadyBooked.length) {
+      const message = `You already have a booking on ${booking.appointmentDate}`
+      return res.send({ acknowledged: false, message })
+  }
+
     
     const result= await bookingnsCollection.insertOne(booking);
     res.send(result);
