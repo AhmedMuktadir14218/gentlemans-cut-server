@@ -55,12 +55,11 @@ function verifyJWT(req, res, next) {
 async function run() {
     try {
 
-        console.log('db connected');
-        const appointmentOptionCollection = client.db('gentlemans-cut').collection('appointmentOptions');
-        //  const bookingsCollection = client.db('gentlemans-cut').collection('bookings');
-        const bookingsCollection = client.db('gentlemans-cut').collection('bookings');
-        const usersCollection = client.db('gentlemans-cut').collection('users');        
-        const bookingListCollection = client.db('gentlemans-cut').collection('bookings');
+         console.log('db connected');
+         const appointmentOptionCollection = client.db('gentlemans-cut').collection('appointmentOptions');
+         const bookingsCollection = client.db('gentlemans-cut').collection('bookings');
+         const usersCollection = client.db('gentlemans-cut').collection('users');        
+   const bookingListCollection = client.db('gentlemans-cut').collection('bookings');
         const berbarsCollection = client.db('gentlemans-cut').collection('berbars');
         const paymentsCollection = client.db('gentlemans-cut').collection('payments');
 
@@ -125,7 +124,7 @@ STRIPE_SECRET_KEY=sk_test_51MUtJ3HKWwYR1p91rpXCcZLN2xGubVwdNXLhYcDU1AAoWbpxsDy64
         */
 
  
-  app.get('/bookings', verifyJWT,  async (req, res) => {
+  app.get('/bookings', verifyJWT, async (req, res) => {
     const email = req.query.email;
     const decodedEmail = req.decoded.email;
 
@@ -138,7 +137,7 @@ STRIPE_SECRET_KEY=sk_test_51MUtJ3HKWwYR1p91rpXCcZLN2xGubVwdNXLhYcDU1AAoWbpxsDy64
     res.send(bookings);
 })
 
- 
+
   app.get('/bookinglist', async(req, res) => {
      const query={};
     const options= await bookingListCollection.find(query).toArray();
@@ -230,27 +229,26 @@ STRIPE_SECRET_KEY=sk_test_51MUtJ3HKWwYR1p91rpXCcZLN2xGubVwdNXLhYcDU1AAoWbpxsDy64
             res.send(result);
         });
         app.put('/users/admin/:id', verifyJWT, async (req, res) => {
-          const decodedEmail = req.decoded.email;
-          const query = { email: decodedEmail };
-          const user = await usersCollection.findOne(query);
+            const decodedEmail = req.decoded.email;
+            const query = { email: decodedEmail };
+            const user = await usersCollection.findOne(query);
 
-          if (user?.role !== 'admin') {
-              return res.status(403).send({ message: 'forbidden access' })
-          }
+            if (user?.role !== 'admin') {
+                return res.status(403).send({ message: 'forbidden access' })
+            }
 
-          const id = req.params.id;
-          const filter = { _id: ObjectId(id) }
-          const options = { upsert: true };
-          const updatedDoc = {
-              $set: {
-                  role: 'admin' 
-              }
-          }
-          const result = await usersCollection.updateOne(filter, updatedDoc, options);
-          res.send(result);
-      })
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) }
+            const options = { upsert: true };
+            const updatedDoc = {
+                $set: {
+                    role: 'admin'
+                }
+            }
+            const result = await usersCollection.updateOne(filter, updatedDoc, options);
+            res.send(result);
+        })
 
-  
 
         // temporary to update price field on appointment options
         app.get('/addPrice', async (req, res) => {
