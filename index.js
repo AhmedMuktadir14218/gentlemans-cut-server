@@ -57,11 +57,13 @@ async function run() {
 
         console.log('db connected');
         const appointmentOptionCollection = client.db('gentlemans-cut').collection('appointmentOptions');
-        //  const bookingsCollection = client.db('gentlemans-cut').collection('bookings');
+
+        //  const bookingsCollection = client.db('gentlemans-cut').collection('bookings'); 
         const bookingsCollection = client.db('gentlemans-cut').collection('bookings');
         const usersCollection = client.db('gentlemans-cut').collection('users');        
         const bookingListCollection = client.db('gentlemans-cut').collection('bookings');
         const berbarsCollection = client.db('gentlemans-cut').collection('berbars');
+        const newServiceCollection = client.db('gentlemans-cut').collection('newService');
         const paymentsCollection = client.db('gentlemans-cut').collection('payments');
 
         // NOTE: make sure you use verifyAdmin after verifyJWT
@@ -145,7 +147,7 @@ STRIPE_SECRET_KEY=sk_test_51MUtJ3HKWwYR1p91rpXCcZLN2xGubVwdNXLhYcDU1AAoWbpxsDy64
     res.send(options)
   }) 
    app.post('/bookings', async(req, res) => {
-      
+       
     const booking=req.body;
     console.log(booking);
 
@@ -280,12 +282,24 @@ STRIPE_SECRET_KEY=sk_test_51MUtJ3HKWwYR1p91rpXCcZLN2xGubVwdNXLhYcDU1AAoWbpxsDy64
             res.send(result);
         });
 
-        app.delete('/berbars/:id', /**verifyJWT, verifyAdmin, */verifyJWT, verifyAdmin, async (req, res) => {
+        app.delete('/berbars/:id', /** verifyJWT, verifyAdmin, */verifyJWT, verifyAdmin, async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
             const result = await berbarsCollection.deleteOne(filter);
             res.send(result);
         })
+        app.get('/newservice',/** */verifyJWT, verifyAdmin,  async (req, res) => {
+            const query = {};
+            const newservices = await newServiceCollection.find(query).toArray();
+            res.send(newservices);     
+        })
+
+        app.post('/appointmentOptions',/**verifyJWT, verifyAdmin, */verifyJWT, verifyAdmin, async (req, res) => {
+            const newservice = req.body;
+            const result = await appointmentOptionCollection.insertOne(newservice);
+            res.send(result);
+        });
+
 
     }
     finally {
