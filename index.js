@@ -97,6 +97,13 @@ async function run() {
             })
             res.send(options);
         });
+        
+        app.post('/appointmentOptions',/**verifyJWT, verifyAdmin, */verifyJWT, verifyAdmin, async (req, res) => {
+            const newservice = req.body;
+            const result = await appointmentOptionCollection.insertOne(newservice);
+            res.send(result);
+        });
+
 
         app.get('/appointmentSpecialty', async (req, res) => {
             const query = {}
@@ -288,17 +295,7 @@ STRIPE_SECRET_KEY=sk_test_51MUtJ3HKWwYR1p91rpXCcZLN2xGubVwdNXLhYcDU1AAoWbpxsDy64
             const result = await berbarsCollection.deleteOne(filter);
             res.send(result);
         })
-        app.get('/newservice',/** */verifyJWT, verifyAdmin,  async (req, res) => {
-            const query = {};
-            const newservices = await newServiceCollection.find(query).toArray();
-            res.send(newservices);     
-        })
-
-        app.post('/appointmentOptions',/**verifyJWT, verifyAdmin, */verifyJWT, verifyAdmin, async (req, res) => {
-            const newservice = req.body;
-            const result = await appointmentOptionCollection.insertOne(newservice);
-            res.send(result);
-        });
+    
 
 
     }
