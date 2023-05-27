@@ -288,7 +288,7 @@ STRIPE_SECRET_KEY=sk_test_51MUtJ3HKWwYR1p91rpXCcZLN2xGubVwdNXLhYcDU1AAoWbpxsDy64
             const result = await berbarsCollection.insertOne(doctor);
             res.send(result);
         });
-
+  
         app.delete('/berbars/:id', /** verifyJWT, verifyAdmin, */verifyJWT, verifyAdmin, async (req, res) => {
             const id = req.params.id;
             const filter = { _id: ObjectId(id) };
